@@ -49,22 +49,26 @@ audio_file.mp3 / .wav
                        │
                        ▼
 ┌─────────────────────────────────────────────────────┐
-│            Multi-Agent LLM Pipeline                 │
+│     Multi-Agent LLM Pipeline — asyncio.gather       │
+│     Agent 1 & Agent 2 fire in parallel              │
 │                                                     │
-│  Agent 1 — Acoustic Expert                          │
-│  Model  : llama-3.1-8b-instant  (fast, cheap)       │
-│  Input  : volume_data, silence_data, metadata       │
-│  Output : overall_usability, acoustic_issues        │
-│                                                     │
-│  Agent 2 — Linguistic Expert                        │
-│  Model  : llama-3.1-8b-instant  (fast, cheap)       │
-│  Input  : file_name, silence_data + Whisper result  │◄── Whisper ground truth
-│  Output : detected_languages, linguistic_issues     │
-│                                                     │
-│  Agent 3 — Manager / Reconciler                     │
-│  Model  : llama-3.3-70b-versatile  (strong reasoning)│
-│  Input  : Agent 1 + Agent 2 findings + all issues   │
-│  Output : final summary + prioritised recommendations│
+│  ┌─ Agent 1 — Acoustic Expert ──────────────────┐   │
+│  │  Model  : llama-3.1-8b-instant               │   │
+│  │  Input  : volume_data, silence_data, metadata │   │
+│  │  Output : overall_usability, acoustic_issues  │   │
+│  └───────────────────────────────────────────────┘   │
+│                         ║  parallel                  │
+│  ┌─ Agent 2 — Linguistic Expert ────────────────┐   │
+│  │  Model  : llama-3.1-8b-instant               │   │
+│  │  Input  : file_name, silence + Whisper result │◄──┼── Whisper ground truth
+│  │  Output : detected_languages, ling_issues     │   │
+│  └───────────────────────────────────────────────┘   │
+│                         ║  both complete             │
+│  ┌─ Agent 3 — Manager / Reconciler ────────────┐    │
+│  │  Model  : llama-3.3-70b-versatile            │    │
+│  │  Input  : Agent 1 + Agent 2 findings         │    │
+│  │  Output : summary + recommendations          │    │
+│  └───────────────────────────────────────────────┘   │
 └──────────────────────┬──────────────────────────────┘
                        │
                        ▼
@@ -97,10 +101,13 @@ Agent 2 (Linguistic Expert) uses OpenAI Whisper `tiny` to sample the first 30 se
 - **Pass 1 — Math guard:** drops any LLM issue that contradicts raw measured numbers (e.g., claiming bitrate is low when it is 128 kbps)
 - **Pass 2 — Semantic deduplication:** if an LLM issue covers the same topic as a Python infra issue (clipping, noise, bitrate, silence, volume), the Python version is kept as authoritative and the LLM duplicate is dropped. LLM-only insights with no Python equivalent are kept as genuine added value.
 
-### 4. Pydantic for Structured Output
+### 4. Parallel Agent Execution via asyncio
+Agent 1 (Acoustic) and Agent 2 (Linguistic) are fully independent — they share no inputs and produce no outputs that the other needs. They run concurrently using `asyncio.gather` + `asyncio.to_thread`, cutting the LLM waiting time for both agents by ~50%. Agent 3 (Manager) still runs sequentially after both complete, since it depends on their outputs. `nest_asyncio` is used to allow this inside Jupyter's existing event loop.
+
+### 5. Pydantic for Structured Output
 All reports are validated through Pydantic models before being written to disk, guaranteeing a consistent JSON schema regardless of LLM response variation.
 
-### 5. Fault Tolerance via Tenacity
+### 6. Fault Tolerance via Tenacity
 Each LLM call is wrapped with a `tenacity` retry decorator targeting `RateLimitError` and `httpx.TimeoutException`:
 - **Strategy:** exponential backoff 2s → 4s → 8s, max 3 attempts
 - **Per-agent fallback:** if all retries fail, each agent returns a valid static object — rule-based verdict for Agent 1, Whisper result for Agent 2, templated summary for Agent 3 — so the pipeline never crashes
