@@ -1,0 +1,24 @@
+{
+  "file_name": "moonlight-plaza.mp3",
+  "duration_seconds": 854.53,
+  "audio_quality": {
+    "silence_ratio": 0.0116,
+    "clipping_detected": false,
+    "avg_volume_db": -25.3
+  },
+  "issues": [
+    "Medium background noise detected \u2014 may reduce transcription accuracy"
+  ],
+  "llm_summary": "The audio file moonlight-plaza.mp3 is partially usable, with an average volume of -25.3 dB and a low silence ratio of 1.16%, indicating that the audio is generally clear but may have some background noise issues. The linguistic expert found no issues with the language used in the recording. However, the presence of medium background noise may reduce transcription accuracy. Overall, the file's acoustic quality is acceptable, but some minor issues may impact its usability.",
+  "recommendations": [
+    "Conduct a noise reduction process on the audio file to minimize the impact of background noise on transcription accuracy.",
+    "Verify the transcription of the audio file to ensure that the medium background noise does not significantly affect the accuracy of the transcription.",
+    "Consider re-recording the audio in a quieter environment to improve overall sound quality.",
+    "Use noise-cancelling software or algorithms to enhance the audio quality and reduce the medium background noise.",
+    "Review the audio file for any sections with particularly high background noise and consider re-recording or re-editing those sections to improve overall quality."
+  ],
+  "overall_usability": "partially_usable",
+  "detected_languages": [
+    "en"
+  ]
+}

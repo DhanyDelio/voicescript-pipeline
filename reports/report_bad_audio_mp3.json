@@ -1,0 +1,27 @@
+{
+  "file_name": "bad_audio.mp3",
+  "duration_seconds": 121.11,
+  "audio_quality": {
+    "silence_ratio": 0.1341,
+    "clipping_detected": true,
+    "avg_volume_db": -16.6
+  },
+  "issues": [
+    "Audio clipping detected \u2014 may cause distortion",
+    "High background noise detected \u2014 may reduce transcription accuracy",
+    "Low bitrate: 47 kbps \u2014 may affect audio quality"
+  ],
+  "llm_summary": "The audio file bad_audio.mp3 has been deemed unusable due to significant acoustic issues, including clipping detected at max volume and high background noise, which may cause distortion and reduce transcription accuracy. Despite the linguistic expert finding no issues, the acoustic problems are severe enough to impact overall audio quality. The low bitrate of 47.235 kbps, which is below the recommended threshold, further exacerbates these issues. The combination of these factors suggests that the audio file is not suitable for its intended purpose.",
+  "recommendations": [
+    "Increase the bitrate to at least 64 kbps to improve audio quality and reduce potential distortion.",
+    "Apply noise reduction techniques to minimize the impact of high background noise on transcription accuracy.",
+    "Re-record the audio at a higher quality to prevent clipping and distortion.",
+    "Consider using a lossless audio codec to preserve the original audio quality.",
+    "Implement audio normalization to ensure consistent volume levels and reduce the impact of clipping.",
+    "Verify the audio equipment and recording environment to prevent similar issues in future recordings."
+  ],
+  "overall_usability": "unusable",
+  "detected_languages": [
+    "en"
+  ]
+}
