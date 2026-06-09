@@ -29,21 +29,23 @@ audio_file.mp3 / .wav
 │                                                     │
 │  Tool 3: detect_volume_and_clipping() → volumedetect│
 │          avg_db, max_db, clipping, noise_level      │
-│                                                     │
-│  Tool 4: detect_language_whisper()  → Whisper tiny  │
-│          ISO language code, confidence, bilingual   │
 └──────────────────────┬──────────────────────────────┘
                        │
-                       ▼
-┌─────────────────────────────────────────────────────┐
-│            Python Infrastructure Rules              │
-│  Deterministic checks — no LLM involved             │
-│  • silence_ratio > 20%                              │
-│  • clipping (max_vol >= -1 dB)                      │
-│  • noise level medium/high                          │
-│  • bitrate < 64 kbps                                │
-│  • avg_volume_db < -40 dB                           │
-└──────────────────────┬──────────────────────────────┘
+        ┌──────────────┴──────────────┐
+        │                             │
+        ▼                             ▼
+┌───────────────────┐    ┌────────────────────────────┐
+│  Python Infra     │    │  Tool 4: Whisper tiny       │
+│  Rules (no LLM)   │    │  detect_language_whisper()  │
+│                   │    │  → ISO lang code            │
+│  • clipping       │    │  → confidence score         │
+│  • noise level    │    │  → bilingual detection      │
+│  • silence ratio  │    │  (samples first 30s of audio)│
+│  • bitrate check  │    └──────────────┬─────────────┘
+│  • low volume     │                   │
+└───────┬───────────┘                   │ ground truth
+        │                               │ language data
+        └──────────────┬────────────────┘
                        │
                        ▼
 ┌─────────────────────────────────────────────────────┐
@@ -56,7 +58,7 @@ audio_file.mp3 / .wav
 │                                                     │
 │  Agent 2 — Linguistic Expert                        │
 │  Model  : llama-3.1-8b-instant  (fast, cheap)       │
-│  Input  : file_name, silence_data + Whisper result  │
+│  Input  : file_name, silence_data + Whisper result  │◄── Whisper ground truth
 │  Output : detected_languages, linguistic_issues     │
 │                                                     │
 │  Agent 3 — Manager / Reconciler                     │
