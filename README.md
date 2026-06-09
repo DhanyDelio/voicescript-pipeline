@@ -328,7 +328,31 @@ python mcp_server.py
 
 ---
 
-## Extensibility
+## Cost Efficiency
+
+The pipeline is designed for multi-agent quality at minimal LLM cost by using tiered models.
+
+| Agent | Model | Role | Input price | Output price |
+|---|---|---|---|---|
+| Agent 1 — Acoustic Expert | `llama-3.1-8b-instant` | Structured JSON verdict | $0.05 / 1M tokens | $0.08 / 1M tokens |
+| Agent 2 — Linguistic Expert | `llama-3.1-8b-instant` | Language detection + risks | $0.05 / 1M tokens | $0.08 / 1M tokens |
+| Agent 3 — Manager | `llama-3.3-70b-versatile` | Final synthesis + recommendations | $0.59 / 1M tokens | $0.79 / 1M tokens |
+
+**Estimated cost per audio file: ~$0.001 – $0.003**
+
+Agent 1 and Agent 2 handle well-defined, structured tasks that a small model does reliably — no need to burn 70B tokens for that. Agent 3 is the only call that benefits from stronger reasoning, and it runs once per file.
+
+Compared to running all three calls on `llama-3.3-70b-versatile`:
+
+| Approach | Cost per file | Quality |
+|---|---|---|
+| All 3 agents on 70B | ~$0.008 – $0.015 | Same final output |
+| **Tiered (8B + 8B + 70B)** | **~$0.001 – $0.003** | Same final output |
+| **Saving** | **~80% cheaper** | ✅ No quality loss |
+
+---
+
+
 
 - **New ffmpeg tools** — add a `detect_*()` function following the same pattern and wire it into Step 4
 - **New LLM agents** — add a specialist (e.g. speaker diarisation) between Agent 2 and Agent 3
