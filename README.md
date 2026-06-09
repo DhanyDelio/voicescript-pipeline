@@ -132,7 +132,7 @@ ffmpeg -version && ffprobe -version
 
 ### Python Dependencies
 ```bash
-pip install langchain langchain-groq pydantic python-dotenv groq tenacity httpx openai-whisper fastmcp
+pip install langchain langchain-groq pydantic python-dotenv groq tenacity httpx openai-whisper fastmcp nest_asyncio
 ```
 
 > The first run will automatically download the Whisper `tiny` model (~75 MB). Subsequent runs use the cached model.
@@ -363,5 +363,5 @@ Compared to running all three calls on `llama-3.3-70b-versatile`:
 
 - **New ffmpeg tools** — add a `detect_*()` function following the same pattern and wire it into Step 4
 - **New LLM agents** — add a specialist (e.g. speaker diarisation) between Agent 2 and Agent 3
-- **Batch at scale** — replace sequential agent calls with `asyncio.gather()` for parallel processing
+- **Batch at scale** — replace sequential file processing in `batch_analyze()` with `asyncio.gather()` to analyze multiple audio files concurrently
 - **OpenAI fallback** — swap `ChatGroq` with `ChatOpenAI` by changing one import and one env variable
