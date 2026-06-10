@@ -292,13 +292,14 @@ Reports are automatically saved to `./reports/` after the final cell.
 | 4 | Tool 1 | `get_audio_metadata()` via ffprobe |
 | 5 | Tool 2 | `detect_silence()` via ffmpeg silencedetect |
 | 6 | Tool 3 | `detect_volume_and_clipping()` via ffmpeg volumedetect |
-| 6b | Tool 4 | `detect_language_whisper()` via OpenAI Whisper tiny |
-| 7 | Multi-Agent LLM | Agent 1 · Agent 2 (+ Whisper) · Agent 3 with fault tolerance |
-| 8 | Main Orchestrator | `analyze_audio()` — full 9-step pipeline with sanitizer |
-| 9 | Run Analysis | Analyze `bad_audio.mp3` + `moonlight-plaza.mp3` |
-| 10 | Comparison | Side-by-side results table + LLM summaries |
-| 11 | Batch Processing | `batch_analyze()` for entire directories |
-| 12 | Save Reports | Auto-save all reports to `./reports/` |
+| 7 | Tool 4 | `detect_language_whisper()` via OpenAI Whisper tiny |
+| 8 | Multi-Agent LLM | Agent 1 · Agent 2 (+ Whisper) · Agent 3 with fault tolerance |
+| 9 | Main Orchestrator | `analyze_audio()` — full pipeline with parallel agents + sanitizer |
+| 10 | Run Analysis | Analyze `bad_audio.mp3` + `moonlight-plaza.mp3` |
+| 11 | Comparison | Side-by-side results table + LLM summaries |
+| 12 | Batch Processing | `batch_analyze()` for entire directories |
+| 13 | Save Reports | Auto-save all reports to `./reports/` |
+| 14 | Example Output | Real JSON output from both test files |
 
 ---
 
